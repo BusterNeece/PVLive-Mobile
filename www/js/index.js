@@ -18,73 +18,93 @@
  */
 
 $(function() {
-    app.initialize();
+    receivedEvent('onload');
+
+    $.extend($.mobile.path, {
+        isExternal: function( url ) {
+            return !(url.indexOf('ponyvillelive.com') >= 0);
+        },
+        isPermittedCrossDomainRequest: function( docUrl, reqUrl ) {
+            return true;
+        }
+    });
+
 });
 
-var gaPlugin;
-var is_app = true;
+$(document).on("mobileinit", function() {
+    receivedEvent('mobileinit');
 
-var app = {
-    // Application Constructor
-    initialize: function() {
-        this.bindEvents();
-    },
+    console.log('CORS ' + $.support.cors);
 
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
+    $.mobile.pushStateEnabled = false;
+    $.mobile.autoInitializePage = false;
+    $.mobile.allowCrossDomainPages = true;
+});
 
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicity call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+$(document).on("pageinit", function() {
+    receivedEvent('pageinit');
+});
 
-        document.addListener('offline', this.onOffline, false);
+$(document).on('deviceready', function() {
+    receivedEvent('deviceready');
 
-        // Verify Internet connection.
-        var networkState = checkConnection();
-        if (networkState == Connection.NONE) {
-            navigator.notification.alert('This app requires an internet connection.');
-            return;
-        }
+    // Verify Internet connection.
+    var networkState = navigator.network.connection.type;
+    if (networkState == Connection.NONE) {
+        alertMessage('This app requires an internet connection.');
+        return;
+    }
 
-        // Load Google Analytics.
+    // Load Google Analytics.
+    try
+    {
         gaPlugin = window.plugins.gaPlugin;
         gaPlugin.init(successHandler, errorHandler, "UA-37359273-1", 15);
-
-        // Load remote mobile page and inject into body.
-        $('body').load('http://ponyvillelive.com/mobile body');
-        /*
-        $.ajax({
-            url: 'http://ponyvillelive.com/mobile',
-            dataType: 'html',
-            success: function(data) {
-                $('body').html($(data).html());
-            },
-            error: function(jqXHR, textStatus) {
-                navigator.notification.alert('Could not load: '+textStatus);
-            }
-        });
-        */
-
-        // Trigger remote init scripts.
-        initPage();
-    },
-
-    onOffline: function() {
-        app.receivedEvent('offline');
-
-        navigator.notification.alert('Internet connection lost!');
-    },
-
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        console.log('Received Event: ' + id);
     }
-};
+    catch(err) {}
+
+    // Load remote mobile page and inject into body.
+    $('body').load('http://ponyvillelive.com/mobile/index #webapp', function() {
+        console.log('Page loaded!');
+
+        $.mobile.autoInitializePage = true;
+        $.mobile.initializePage();
+    });
+});
+
+$(document).on('offline', function() {
+    receivedEvent('offline');
+
+    alertMessage('Internet connection lost!');
+});
+
+/**
+ * Custom Link Handling
+ */
+
+$(document).on('vClick', 'a', function(event) {
+    event.preventDefault();
+
+    var link_url = $(this).attr('href');
+    console.log(link_url);
+    return false;
+
+    if (link_url.contains('/mobile/'))
+        $.mobile.changePage(link_url);
+    else
+        window.open(link_url, '_blank', 'location=yes');
+});
+
+/**
+ * Utility Functions
+ */
+
+function receivedEvent(id) {
+    console.log('Received Event: ' + id);
+}
+
+function alertMessage(msg)
+{
+    console.log(msg);
+    navigator.notification.alert(msg);
+}
