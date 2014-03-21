@@ -32,34 +32,28 @@ Ponyville Live! - Bringing Pony People Together
 
     <feature name="Media">
         <param name="android-package" value="org.apache.cordova.AudioHandler" />
-    </feature>
-    <feature name="Media">
         <param name="ios-package" value="CDVSound" />
     </feature>
 
     <feature name="NetworkStatus">
         <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager" />
-    </feature>
-    <feature name="NetworkStatus">
         <param name="ios-package" value="CDVConnection" />
     </feature>
 
+    <!--
     <feature name="SplashScreen">
         <param name="android-package" value="org.apache.cordova.splashscreen.SplashScreen" />
-    </feature>
-    <feature name="SplashScreen">
         <param name="ios-package" value="CDVSplashScreen" />
     </feature>
 
     <feature name="Notification">
         <param name="android-package" value="org.apache.cordova.dialogs.Notification" />
-    </feature>
-    <feature name="Notification">
         <param name="ios-package" value="CDVNotification" />
     </feature>
     <feature name="Vibration">
         <param name="android-package" value="org.apache.cordova.vibration.Vibration" />
     </feature>
+    -->
 
     <!--
         If you do not want any permissions to be added to your app, add the
@@ -78,7 +72,7 @@ Ponyville Live! - Bringing Pony People Together
     <preference name="ios-statusbarstyle"         value="default" />        <!-- ios: black-translucent will appear black because the PhoneGap webview doesn't go beneath the status bar -->
     <preference name="detect-data-types"          value="false" />           <!-- ios: controls whether data types (such as phone no. and dates) are automatically turned into links by the system -->
     <preference name="exit-on-suspend"            value="false" />          <!-- ios: if set to true, app will terminate when home button is pressed -->
-    <preference name="show-splash-screen-spinner" value="true" />           <!-- ios: if set to false, the spinner won't appear on the splash screen during app loading -->
+    <preference name="show-splash-screen-spinner" value="false" />           <!-- ios: if set to false, the spinner won't appear on the splash screen during app loading -->
     <preference name="auto-hide-splash-screen"    value="true" />           <!-- ios: if set to false, the splash screen must be hidden using a JavaScript API -->
     <preference name="android-minSdkVersion"      value="7" />              <!-- android: MIN SDK version supported on the target device. MAX version is blank by default. -->
     <preference name="android-installLocation"    value="auto" />           <!-- android: app install location. 'auto' will choose. 'internalOnly' is device memory. 'preferExternal' is SDCard. -->
@@ -92,11 +86,14 @@ Ponyville Live! - Bringing Pony People Together
     <gap:plugin name="com.adobe.plugins.gaplugin" />
 
     <gap:plugin name="org.apache.cordova.device" />
+    <gap:plugin name="org.apache.cordova.network-information" />
+    <gap:plugin name="org.apache.cordova.media" />
+
+    <!--
     <gap:plugin name="org.apache.cordova.dialogs" />
     <gap:plugin name="org.apache.cordova.vibration" />
     <gap:plugin name="org.apache.cordova.splashscreen" />
-    <gap:plugin name="org.apache.cordova.media" />
-    <gap:plugin name="org.apache.cordova.network-information" />
+    -->
 
     <!-- Define app icon for each platform. -->
     <icon src="img/logo.png" />
@@ -114,8 +111,11 @@ Ponyville Live! - Bringing Pony People Together
     <gap:splash src="res/screen/android/screen-mdpi-portrait.png"  gap:platform="android" gap:density="mdpi" />
     <gap:splash src="res/screen/android/screen-hdpi-portrait.png"  gap:platform="android" gap:density="hdpi" />
     <gap:splash src="res/screen/android/screen-xhdpi-portrait.png" gap:platform="android" gap:density="xhdpi" />
+    <gap:splash src="res/screen/android/screen-nexus7-portrait.png" gap:platform="android" width="1200" height="1920" />
+
     <gap:splash src="res/screen/ios/screen-iphone-portrait.png"    gap:platform="ios"     width="320" height="480" />
     <gap:splash src="res/screen/ios/screen-iphone-portrait-2x.png" gap:platform="ios"     width="640" height="960" />
+    <gap:splash src="res/screen/ios/screen-iphone-portrait-568h-2x.png" gap:platform="ios"     width="640" height="1136" />
 
     <!--
         Define access to external domains.

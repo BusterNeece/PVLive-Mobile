@@ -21,6 +21,22 @@ $(function() {
     receivedEvent('onload');
 
     $.extend($.mobile.path, {
+        getLocation: function( url ) {
+            return $('[data-type="page"]').data('url');
+
+            /*
+            var uri = url ? this.parseUrl( url ) : location,
+                hash = this.parseUrl( url || location.href ).hash;
+
+            // mimic the browser with an empty string when the hash is empty
+            hash = hash === "#" ? "" : hash;
+
+            // Make sure to parse the url or the location object for the hash because using location.hash
+            // is autodecoded in firefox, the rest of the url should be from the object (location unless
+            // we're testing) to avoid the inclusion of the authority
+            return uri.protocol + "//" + uri.host + uri.pathname + uri.search + hash;
+            */
+        },
         isExternal: function( url ) {
             return !(url.indexOf('ponyvillelive.com') >= 0);
         },
@@ -65,6 +81,8 @@ $(document).on('deviceready', function() {
 
     // Load remote mobile page and inject into body.
     $('body').load('http://ponyvillelive.com/mobile/index #webapp', function() {
+        $('#page').addClass('page-mobile');
+        
         console.log('Page loaded!');
 
         $.mobile.autoInitializePage = true;
