@@ -5,16 +5,17 @@
         <div class="list list-inset">
             <div class="item item-avatar">
                 <img src="{{station.station.image_url}}">
+                <span class="item-note"><i class="icon ion-person-stalker"></i> {{stream.listeners.current}}</span>
                 <h2>{{stream.current_song.title}}</h2>
                 <p>{{stream.current_song.artist}}</p>
             </div>
 
             <div class="item tabs tabs-secondary tabs-icon-left">
-                <a class="tab-item" href="">
+                <a class="tab-item" id="btn-like-song" href="" ng-click="likeSong(stream.current_song)">
                     <i class="icon ion-thumbsup"></i>
                     Like
                 </a>
-                <a class="tab-item" href="">
+                <a class="tab-item" id="btn-dislike-song" href="" ng-click="dislikeSong(stream.current_song)">
                     <i class="icon ion-thumbsdown"></i>
                     Dislike
                 </a>
@@ -23,9 +24,25 @@
 
         <div class="padding-horizontal">
             <div ng-repeat="station_stream in station.streams">
-                <a href="" class="button button-block icon-left ion-play" ng-class="{'button-dark': isActiveStream(station_stream), 'button-small button-stable': !isActiveStream(station_stream)}" ng-click="playStream(station_stream)">
+                <a href="" class="button button-block icon-left" ng-class="{'button-dark': isActiveStream(station_stream), 'button-small button-stable': !isActiveStream(station_stream), 'ion-play': !isPlaying(station_stream), 'ion-pause': isPlaying(station_stream)}" ng-click="playStream(station_stream)">
                     {{station_stream.name}}
                 </a>
+            </div>
+        </div>
+
+        <div class="list list-inset" ng-if="station.event.id">
+            <div class="item item-divider">Current Event</div>
+            <div class="item item-text-wrap">
+                <h2>{{station.event.title}}</h2>
+                <p>{{station.event.range}}</p>
+            </div>
+        </div>
+
+        <div class="list list-inset" ng-if="station.event_upcoming.id">
+            <div class="item item-divider">Coming Up in {{station.event_upcoming.minutes_until}} Minutes</div>
+            <div class="item item-text-wrap">
+                <h2>{{station.event_upcoming.title}}</h2>
+                <p>{{station.event_upcoming.range}}</p>
             </div>
         </div>
 
