@@ -30,6 +30,8 @@ controllers.controller('StationsCtrl', function($scope, pvlService, $ionicModal,
                 }
             };
 
+            $scope.$broadcast('scroll.refreshComplete');
+
             if (np_timeout !== null)
                 $timeout.cancel(np_timeout);
 
@@ -43,11 +45,71 @@ controllers.controller('StationsCtrl', function($scope, pvlService, $ionicModal,
 
 });
 
-controllers.controller('StationCtrl', function($scope, $ionicModal, $timeout) {
+controllers.controller('StationCtrl', function($scope, $stateParams, pvlService, $ionicModal, $timeout) {
 
-    $scope.playStream = function() {
+    var np_timeout = null;
+    var active_stream = null;
+
+    $scope.station = {};
+    $scope.stream = {};
+
+    $scope.reloadPage = function() { loadNowPlaying() };
+    $scope.isActiveStream = function(stream) {
+        return (active_stream == stream.id);
+    };
+
+    $scope.playStream = function(stream)
+    {
+        active_stream = stream.id;
+
+        processNowPlaying();
+    };
+
+    $scope.likeSong = function(song)
+    {
 
     };
+    $scope.dislikeSong = function(song)
+    {
+
+    };
+
+    loadNowPlaying();
+
+    function loadNowPlaying()
+    {
+        pvlService.getNowPlayingStation($stateParams.stationId).then(function(np)
+        {
+            $scope.station = np;
+
+            processNowPlaying();
+
+            $scope.$broadcast('scroll.refreshComplete');
+
+            if (np_timeout !== null)
+                $timeout.cancel(np_timeout);
+
+            np_timeout = $timeout(loadNowPlaying, 30000);
+        });
+    }
+
+    function processNowPlaying()
+    {
+        if (active_stream == null)
+        {
+            var default_stream = _.find($scope.station.streams, {'is_default': true});
+            active_stream = default_stream.id;
+        }
+
+        var old_stream = $scope.stream;
+        var new_stream = _.find($scope.station.streams, {'id': active_stream});
+
+        $scope.stream = new_stream;
+    }
+
+    $scope.$on("$destroy", function(event) {
+        $timeout.cancel(np_timeout);
+    });
 
 });
 

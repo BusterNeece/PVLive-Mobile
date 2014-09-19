@@ -39,6 +39,16 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     });
 
+    $stateProvider.state('app.station', {
+        url: "/station/:stationId",
+        views: {
+            'menuContent' :{
+                templateUrl: "templates/station.html",
+                controller: 'StationCtrl'
+            }
+        }
+    });
+
     $stateProvider.state('app.search', {
       url: "/search",
       views: {
