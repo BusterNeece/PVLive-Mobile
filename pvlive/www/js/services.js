@@ -9,7 +9,10 @@ services.service("pvlService", function( $http, $q ) {
         getStations: getStations,
         getStation: getStation,
         getShows: getShows,
-        getShow: getShow
+        getShow: getShow,
+        voteLike: voteLike,
+        voteDislike: voteDislike,
+        voteClear: voteClear
     });
 
     /**
@@ -46,6 +49,19 @@ services.service("pvlService", function( $http, $q ) {
         return apiCall('show/index/id/'+show_id);
     }
 
+    function voteLike(sh_id)
+    {
+        return apiCall('song/like/sh_id/'+sh_id);
+    }
+    function voteDislike(sh_id)
+    {
+        return apiCall('song/dislike/sh_id/'+sh_id);
+    }
+    function voteClear(sh_id)
+    {
+        return apiCall('song/clearvote/sh_id/'+sh_id);
+    }
+
     /**
      * Private Methods
      */
@@ -53,9 +69,8 @@ services.service("pvlService", function( $http, $q ) {
     function apiCall( api_function, api_params )
     {
         var request = $http({
-            method: "get",
+            method: 'GET',
             url: "http://ponyvillelive.com/api/"+api_function,
-            params: api_params,
             data: {
                 service: 'pvlmobile'
             }
