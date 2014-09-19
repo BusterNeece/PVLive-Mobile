@@ -1,0 +1,44 @@
+<ion-view title="{{station.station.name}}">
+    <ion-content class="has-header">
+        <ion-refresher pulling-text="Pull to refresh..." on-refresh="reloadPage()"></ion-refresher>
+
+        <div class="list list-inset">
+            <div class="item item-avatar">
+                <img src="{{station.station.image_url}}">
+                <h2>{{stream.current_song.title}}</h2>
+                <p>{{stream.current_song.artist}}</p>
+            </div>
+
+            <div class="item tabs tabs-secondary tabs-icon-left">
+                <a class="tab-item" href="">
+                    <i class="icon ion-thumbsup"></i>
+                    Like
+                </a>
+                <a class="tab-item" href="">
+                    <i class="icon ion-thumbsdown"></i>
+                    Dislike
+                </a>
+            </div>
+        </div>
+
+        <div class="padding-horizontal">
+            <div ng-repeat="station_stream in station.streams">
+                <a href="" class="button button-block icon-left ion-play" ng-class="{'button-dark': isActiveStream(station_stream), 'button-small button-stable': !isActiveStream(station_stream)}" ng-click="playStream(station_stream)">
+                    {{station_stream.name}}
+                </a>
+            </div>
+        </div>
+
+        <div class="list list-inset">
+            <div class="item item-divider">Recently Played</div>
+            <div class="item item-text-wrap">
+                <ul>
+                    <li ng-repeat="(h_offset, h_row) in stream.song_history">
+                        #{{h_offset+1}}: {{h_row.song.artist}} - {{h_row.song.title}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </ion-content>
+</ion-view>
