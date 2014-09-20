@@ -8,7 +8,7 @@ sudo apt-get install -y python-software-properties
 sudo add-apt-repository ppa:webupd8team/java
 
 sudo apt-get update
-sudo apt-get install -y nodejs nodejs-legacy npm git openjdk-7-jdk ant expect
+sudo apt-get install -y nodejs nodejs-legacy npm git openjdk-7-jdk ant expect zip
 
 # Android SDK dependencies
 sudo dpkg --add-architecture i386
@@ -25,6 +25,7 @@ echo "PATH=\$PATH:~/android-sdk-linux/tools:~/android-sdk-linux/platform-tools" 
 
 npm install -g cordova
 npm install -g ionic
+npm install -g phonegap
 
 expect -c '
 set timeout -1   ;
