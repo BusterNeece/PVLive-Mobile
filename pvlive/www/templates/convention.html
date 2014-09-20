@@ -1,0 +1,22 @@
+<ion-view title="{{con.name}}">
+    <ion-content class="has-header">
+        <div class="list list-inset">
+            <div class="item item-image" ng-if="con.thumbnail_url">
+                <img ng-src="{{con.thumbnail_url}}">
+            </div>
+            <div class="item item-text-wrap">
+                <h2>{{con.name}}</h2>
+                <h4 class="subdued">{{con.location}}</h4>
+                <p>{{con.date_range}}</p>
+            </div>
+        </div>
+
+        <div class="list list-inset">
+            <div class="item item-divider">Footage Archives</div>
+            <a ng-repeat="video in con.archives.videos" class="item item-thumbnail-left" href="{{video.web_url}}" target="_blank">
+                <img ng-src="{{video.thumbnail_url}}">
+                <h2 style="white-space: normal;">{{video.name}}</h2>
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

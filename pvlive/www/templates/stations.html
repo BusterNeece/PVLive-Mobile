@@ -5,7 +5,7 @@
             <div ng-repeat="category in stations">
                 <div class="item item-divider"><i class="icon {{category.icon}}"></i> {{category.name}}</div>
                 <a class="item item-avatar-left" ng-repeat="row in category.stations" href="#/app/station/{{row.station.id}}">
-                    <img src="{{row.station.image_url}}">
+                    <img ng-src="{{row.station.image_url}}">
                     <span class="item-note"><i class="icon ion-person-stalker"></i> {{row.listeners.current}}</span>
 
                     <h2>{{row.station.name}}</h2>

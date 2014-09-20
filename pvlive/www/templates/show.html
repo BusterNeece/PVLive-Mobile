@@ -2,16 +2,25 @@
     <ion-content class="has-header">
         <div class="list list-inset">
             <div class="item item-avatar">
-                <img src="{{show.image_url}}">
+                <img ng-src="{{show.image_url}}">
                 <p>{{show.description}}</p>
             </div>
 
             <div class="item tabs tabs-secondary tabs-icon-left">
-                <a class="tab-item" href="{{show.web_url}}">
+                <a class="tab-item" href="{{show.web_url}}" target="_blank">
                     <i class="icon ion-link"></i>
                     Show Web Site
                 </a>
             </div>
+        </div>
+
+        <div class="list list-inset">
+            <div class="item item-divider">Show Episodes</div>
+            <a class="item item-text-wrap" ng-repeat="row in show.episodes" href="{{row.web_url}}" target="_blank">
+                <h2>{{row.title}}</h2>
+                <h4>{{row.timestamp*1000 | date:'medium'}}</h4>
+                <p>{{row.body}}</p>
+            </a>
         </div>
 
     </ion-content>
