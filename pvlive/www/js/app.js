@@ -49,42 +49,24 @@ app.config(function($stateProvider, $urlRouterProvider) {
         }
     });
 
-    $stateProvider.state('app.search', {
-      url: "/search",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/search.html"
+    $stateProvider.state('app.shows', {
+        url: "/shows",
+        views: {
+            'menuContent' :{
+                templateUrl: "templates/shows.html",
+                controller: 'ShowsCtrl'
+            }
         }
-      }
     });
 
-    $stateProvider.state('app.browse', {
-      url: "/browse",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/browse.html"
+    $stateProvider.state('app.show', {
+        url: "/show/:showId",
+        views: {
+            'menuContent' :{
+                templateUrl: "templates/show.html",
+                controller: 'ShowCtrl'
+            }
         }
-      }
-    });
-
-    $stateProvider.state('app.playlists', {
-      url: "/playlists",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/playlists.html",
-          controller: 'PlaylistsCtrl'
-        }
-      }
-    });
-
-    $stateProvider.state('app.single', {
-      url: "/playlists/:playlistId",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/playlist.html",
-          controller: 'PlaylistCtrl'
-        }
-      }
     });
 
     // if none of the above states are matched, use this as the fallback
