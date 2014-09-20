@@ -1,0 +1,12 @@
+<ion-view title="Shows">
+    <ion-content class="has-header">
+        <ion-refresher pulling-text="Pull to refresh..." on-refresh="reloadPage()"></ion-refresher>
+        <div class="list">
+            <a class="item item-avatar-left" ng-repeat="row in shows" href="#/app/show/{{row.id}}">
+                <img src="{{row.image_url}}">
+                <h2>{{row.name}}</h2>
+                <p>{{row.description}}</p>
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

@@ -231,17 +231,34 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
 
 });
 
-controllers.controller('PlaylistsCtrl', function($scope) {
-    $scope.playlists = [
-        { title: 'Reggae', id: 1 },
-        { title: 'Chill', id: 2 },
-        { title: 'Dubstep', id: 3 },
-        { title: 'Indie', id: 4 },
-        { title: 'Rap', id: 5 },
-        { title: 'Cowbell', id: 6 }
-    ];
+/**
+ * Shows Listing
+ */
+controllers.controller('ShowsCtrl', function($scope, pvlService) {
+
+    $scope.shows = {};
+    $scope.reloadPage = function() { loadShows() };
+
+    loadShows();
+
+    function loadShows()
+    {
+        pvlService.getShows().then(function(shows)
+        {
+            $scope.shows = shows;
+            $scope.$broadcast('scroll.refreshComplete');
+        });
+    }
+
 });
 
-controllers.controller('PlaylistCtrl', function($scope, $stateParams) {
+controllers.controller('ShowCtrl', function($scope, pvlService, $stateParams) {
+
+    $scope.show = {};
+
+    pvlService.getShow($stateParams.showId).then(function(show)
+    {
+        $scope.show = show;
+    });
 
 });
