@@ -1,0 +1,17 @@
+<ion-view title="Conventions">
+    <ion-content class="has-header">
+        <ion-refresher pulling-text="Pull to refresh..." on-refresh="reloadPage()"></ion-refresher>
+        <div class="list">
+            <div ng-repeat="row in cons">
+                <a class="item item-image" ng-if="row.thumbnail_url" href="#/app/convention/{{row.id}}">
+                    <img ng-src="{{row.thumbnail_url}}">
+                </a>
+                <a class="item" href="#/app/convention/{{row.id}}">
+                    <h2>{{row.name}}</h2>
+                    <h4 class="subdued">{{row.location}}</h4>
+                    <p>{{row.date_range}}</p>
+                </a>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

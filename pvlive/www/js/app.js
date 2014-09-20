@@ -69,6 +69,26 @@ app.config(function($stateProvider, $urlRouterProvider) {
         }
     });
 
+    $stateProvider.state('app.conventions', {
+        url: "/conventions",
+        views: {
+            'menuContent' :{
+                templateUrl: "templates/conventions.html",
+                controller: 'ConventionsCtrl'
+            }
+        }
+    });
+
+    $stateProvider.state('app.convention', {
+        url: "/convention/:conventionId",
+        views: {
+            'menuContent' :{
+                templateUrl: "templates/convention.html",
+                controller: 'ConventionCtrl'
+            }
+        }
+    });
+
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/app/stations');
 });

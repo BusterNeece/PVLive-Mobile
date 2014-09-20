@@ -10,6 +10,8 @@ services.service("pvlService", function( $http, $q ) {
         getStation: getStation,
         getShows: getShows,
         getShow: getShow,
+        getConventions: getConventions,
+        getConvention: getConvention,
         voteLike: voteLike,
         voteDislike: voteDislike,
         voteClear: voteClear
@@ -19,6 +21,7 @@ services.service("pvlService", function( $http, $q ) {
      * Public Methods
      */
 
+    // Now-Playing Data
     function getNowPlaying()
     {
         return apiCall('nowplaying');
@@ -29,6 +32,7 @@ services.service("pvlService", function( $http, $q ) {
         return apiCall('nowplaying/index/id/'+station_id);
     }
 
+    // Stations (currently unused)
     function getStations()
     {
         return apiCall('station/list');
@@ -39,6 +43,7 @@ services.service("pvlService", function( $http, $q ) {
         return apiCall('station/index/id/'+station_id);
     }
 
+    // Shows (Podcasts)
     function getShows()
     {
         return apiCall('show/index');
@@ -49,6 +54,18 @@ services.service("pvlService", function( $http, $q ) {
         return apiCall('show/index/id/'+show_id);
     }
 
+    // Conventions
+    function getConventions()
+    {
+        return apiCall('convention/list');
+    }
+
+    function getConvention(con_id)
+    {
+        return apiCall('convention/index/id/'+con_id);
+    }
+
+    // Song like/dislike voting
     function voteLike(sh_id)
     {
         return apiCall('song/like/sh_id/'+sh_id);

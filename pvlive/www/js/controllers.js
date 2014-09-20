@@ -234,10 +234,16 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
 /**
  * Shows Listing
  */
-controllers.controller('ShowsCtrl', function($scope, pvlService) {
-
+controllers.controller('ShowsCtrl', function($scope, pvlService, $ionicLoading)
+{
     $scope.shows = {};
     $scope.reloadPage = function() { loadShows() };
+
+    $scope.$on('$show', function(event) {
+        $ionicLoading.show({
+            template: 'Loading...'
+        });
+    });
 
     loadShows();
 
@@ -246,7 +252,9 @@ controllers.controller('ShowsCtrl', function($scope, pvlService) {
         pvlService.getShows().then(function(shows)
         {
             $scope.shows = shows;
+
             $scope.$broadcast('scroll.refreshComplete');
+            $ionicLoading.hide();
         });
     }
 
@@ -259,6 +267,46 @@ controllers.controller('ShowCtrl', function($scope, pvlService, $stateParams) {
     pvlService.getShow($stateParams.showId).then(function(show)
     {
         $scope.show = show;
+    });
+
+});
+
+/**
+ * Conventions Listing
+ */
+controllers.controller('ConventionsCtrl', function($scope, pvlService, $ionicLoading)
+{
+    $scope.cons = {};
+    $scope.reloadPage = function() { loadConventions() };
+
+    $scope.$on('$show', function(event) {
+        $ionicLoading.show({
+            template: 'Loading...'
+        });
+    });
+
+    loadConventions();
+
+    function loadConventions()
+    {
+        pvlService.getConventions().then(function(cons)
+        {
+            $scope.cons = _.where(cons, function (con) { return con.archives_count > 0; });
+
+            $scope.$broadcast('scroll.refreshComplete');
+            $ionicLoading.hide();
+        });
+    }
+
+});
+
+controllers.controller('ConventionCtrl', function($scope, pvlService, $stateParams) {
+
+    $scope.con = {};
+
+    pvlService.getConvention($stateParams.conventionId).then(function(con)
+    {
+        $scope.con = con;
     });
 
 });
