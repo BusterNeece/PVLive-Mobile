@@ -49,12 +49,10 @@ controllers.controller('StationsCtrl', function($scope, pvlService, $timeout) {
 /**
  * Individual Station & Playback
  */
-controllers.controller('StationCtrl', function($scope, $stateParams, pvlService, $timeout, $window) {
+controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams, pvlService, $timeout, $window) {
 
     var np_timeout = null;
     var active_stream = null;
-    var playing_stream = null;
-    var audio_element = null;
 
     $scope.station = {};
     $scope.stream = {};
@@ -66,7 +64,7 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
         return (active_stream == stream.id);
     };
     $scope.isPlaying = function(stream) {
-        return (active_stream == stream.id && playing_stream == stream.id);
+        return ($rootScope.radio.isStreamPlaying(stream));
     };
 
     // On page triggered events.
@@ -162,8 +160,15 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
     {
         if (active_stream == null)
         {
-            var default_stream = _.find($scope.station.streams, {'is_default': true});
-            active_stream = default_stream.id;
+            if (playing_stream)
+            {
+                active_stream = playing_stream;
+            }
+            else
+            {
+                var default_stream = _.find($scope.station.streams, {'is_default': true});
+                active_stream = default_stream.id;
+            }
         }
 
         var old_stream = $scope.stream;
@@ -191,60 +196,12 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
 
     function playStream(stream)
     {
-        if (playing_stream)
-        {
-            if (playing_stream == stream.id)
-                return true;
-            else
-                stopPlayer();
-        }
-
-        if (window.cordova)
-        {
-            audio_element = new Media(stream.url, function() {
-                console.log("playAudio(): Audio Success");
-            },
-            function(err) {
-                console.error("playAudio(): Audio Error");
-                console.error(err);
-            },
-            function(status) {
-                console.log(status);
-            });
-
-            audio_element.play();
-        }
-        else
-        {
-            if (audio_element == null)
-                audio_element = document.createElement('audio');
-
-            audio_element.setAttribute('src', stream.url);
-            audio_element.play();
-        }
-
-        playing_stream = stream.id;
+        $rootScope.radio.play($scope.station, stream);
     }
 
     function stopPlayer()
     {
-        if (audio_element !== null)
-        {
-            if (window.cordova)
-            {
-                audio_element.stop();
-                audio_element.release();
-
-                window.plugin.notification.local.cancelAll();
-            }
-            else
-            {
-                audio_element.pause();
-                audio_element.setAttribute('src', '');
-            }
-        }
-
-        playing_stream = null;
+        $rootScope.radio.stop();
     }
 
     function notifyNewSong(song)
