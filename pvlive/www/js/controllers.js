@@ -1,8 +1,6 @@
 var controllers = angular.module('pvlive.controllers', []);
 
-controllers.controller('AppCtrl', function($scope) {
-
-});
+controllers.controller('AppCtrl', function($scope) {});
 
 /**
  * Stations Listing
@@ -76,8 +74,6 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
     {
         active_stream = stream.id;
 
-        processNowPlaying();
-
         // Special handling for video streams.
         if (stream.type == "stream")
         {
@@ -85,43 +81,60 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
             return;
         }
 
+        processNowPlaying();
+
         if ($scope.isPlaying(stream))
+        {
             stopPlayer();
+        }
         else
-            playStream($scope.stream);
+        {
+            playStream(stream);
+            notifyNewSong(stream.current_song);
+        }
     };
 
     $scope.likeSong = function(song)
     {
-        if ($('#btn-like-song').hasClass('positive'))
+        var like_btn = document.getElementById('btn-like-song');
+        var dislike_btn = document.getElementById('btn-dislike-song');
+
+        if (like_btn.classList.contains('positive'))
         {
             pvlService.voteClear(song.sh_id);
 
-            $('#btn-like-song,#btn-dislike-song').removeClass('positive assertive');
+            like_btn.classList.remove('positive');
+            dislike_btn.classList.remove('assertive');
         }
         else
         {
             pvlService.voteLike(song.sh_id);
 
-            $('#btn-like-song,#btn-dislike-song').removeClass('positive assertive');
-            $('#btn-like-song').addClass('positive');
+            dislike_btn.classList.remove('assertive');
+
+            like_btn.classList.add('positive');
         }
     };
 
     $scope.dislikeSong = function(song)
     {
-        if ($('#btn-dislike-song').hasClass('assertive'))
+        var like_btn = document.getElementById('btn-like-song');
+        var dislike_btn = document.getElementById('btn-dislike-song');
+
+        if (dislike_btn.classList.contains('assertive'))
         {
             pvlService.voteClear(song.sh_id);
 
-            $('#btn-like-song,#btn-dislike-song').removeClass('positive assertive');
+            like_btn.classList.remove('positive');
+            dislike_btn.classList.remove('assertive');
         }
         else
         {
             pvlService.voteDislike(song.sh_id);
 
-            $('#btn-like-song,#btn-dislike-song').removeClass('positive assertive');
-            $('#btn-dislike-song').addClass('assertive');
+            like_btn.classList.remove('positive');
+
+            dislike_btn.classList.add('assertive');
         }
     };
 
@@ -156,15 +169,24 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
         var old_stream = $scope.stream;
         var new_stream = _.find($scope.station.streams, {'id': active_stream});
 
-        if (old_stream.status && new_stream.status)
-        {
-            if (old_stream.current_song.id != new_stream.current_song.id)
-            {
-                $('#btn-like-song,#btn-dislike-song').removeClass('positive assertive');
-            }
-        }
-
         $scope.stream = new_stream;
+
+        var song_changed;
+
+        // Detect song change.
+        if (old_stream.status && new_stream.status)
+            song_changed = (old_stream.current_song.id != new_stream.current_song.id);
+        else
+            song_changed = true;
+
+        if (song_changed)
+        {
+            document.getElementById('btn-like-song').classList.remove('positive');
+            document.getElementById('btn-dislike-song').classList.remove('assertive');
+
+            if (playing_stream)
+                notifyNewSong(new_stream.current_song);
+        }
     }
 
     function playStream(stream)
@@ -211,6 +233,9 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
             if (window.cordova)
             {
                 audio_element.stop();
+                audio_element.release();
+
+                window.plugin.notification.local.cancelAll();
             }
             else
             {
@@ -220,6 +245,20 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
         }
 
         playing_stream = null;
+    }
+
+    function notifyNewSong(song)
+    {
+        if (window.cordova)
+        {
+            window.plugin.notification.local.add({
+                id:         song.id,
+                message:    song.title+' by '+song.artist,
+                title:      $scope.station.station.name,
+                sound:      '',
+                autoCancel: true
+            });
+        }
     }
 
     // Unload player on page switch.

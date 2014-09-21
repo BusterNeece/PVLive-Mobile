@@ -2,7 +2,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.ponyvillelive.pvlmobile"
-        version   = "2.0.0">
+        version   = "2.0.3">
     <name>Ponyville Live!</name>
 
     <description>
@@ -45,6 +45,11 @@
         <param name="ios-package" value="CDVStatusBar" onload="true"/>
     </feature>
 
+    <feature name="InAppBrowser">
+        <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser" />
+        <param name="ios-package" value="CDVInAppBrowser" />
+    </feature>
+
     <preference name="permissions"                value="none"/>
 
     <!-- Customize your app and platform with the preference element. -->
@@ -71,6 +76,9 @@
     <gap:plugin name="org.apache.cordova.device" />
     <gap:plugin name="org.apache.cordova.network-information" />
     <gap:plugin name="org.apache.cordova.media" />
+    <gap:plugin name="org.apache.cordova.inappbrowser" />
+
+    <gap:plugin name="de.appplant.cordova.plugin.local-notification" />
 
     <!--
     <gap:plugin name="org.apache.cordova.dialogs" />

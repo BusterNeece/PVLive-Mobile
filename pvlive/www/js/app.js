@@ -7,17 +7,38 @@
 var app = angular.module('pvlive', ['ionic', 'pvlive.controllers', 'pvlive.services']);
 
 app.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
-    if(window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-  });
+    $ionicPlatform.ready(function() {
+        if(window.cordova && window.cordova.plugins.Keyboard)
+        {
+            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        }
+        if(window.StatusBar) {
+            // org.apache.cordova.statusbar required
+            StatusBar.styleDefault();
+        }
+
+    });
+});
+
+// Outside links open outside app.
+app.directive('a', function () {
+    return {
+        restrict: 'E',
+        link: function (scope, element, attrs) {
+            if ( !attrs.href ){
+                return;
+            }
+            var url = attrs.href;
+            if ( url.lastIndexOf('http',0) === 0 ){
+                element.on('click',function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    window.open(encodeURI(url), '_system', 'location=yes');
+                });
+            };
+        }
+    };
 });
 
 app.config(function($stateProvider, $urlRouterProvider) {
