@@ -77,7 +77,7 @@ controllers.controller('StationCtrl', function($scope, $stateParams, pvlService,
         // Special handling for video streams.
         if (stream.type == "stream")
         {
-            $window.open(stream.url);
+            window.open(encodeURI(url), '_system', 'location=yes');
             return;
         }
 
