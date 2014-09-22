@@ -7,7 +7,7 @@
                 <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
             </ion-nav-buttons>
             <ion-nav-buttons side="right" ng-if="radio.isPlaying()">
-                <a href="button button-clear" ng-href="{{radio.getStreamUrl()}}"><i class="icon ion-ios7-play-outline"></i></a>
+                <button class="button button-icon button-clear" ng-click="radio.goToStream()">Playing <i class="icon ion-ios7-play"></i></button>
             </ion-nav-buttons>
         </ion-nav-bar>
         <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>

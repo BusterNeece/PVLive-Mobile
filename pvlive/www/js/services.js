@@ -1,6 +1,124 @@
 var services = angular.module('pvlive.services', []);
 
-services.service("pvlService", function( $http, $q ) {
+services.service("loadingService", function($ionicLoading) {
+    var loader;
+
+    return ({
+        show: show,
+        hide: hide
+    });
+
+    function show()
+    {
+        loader = $ionicLoading.show({
+            template: '<i class="icon ion-loading-d" style="font-size: 32px"></i>',
+            animation: 'fade-in',
+            noBackdrop: false
+        });
+    }
+    function hide()
+    {
+        $ionicLoading.hide();
+    }
+
+});
+
+services.service("radioService", function( $state ) {
+
+    var player = null;
+    var stream = null;
+    var station = null;
+
+    // Return public API.
+    return({
+        player: player,
+        stream: stream,
+        station: station,
+        isPlaying: isPlaying,
+        isStreamPlaying: isStreamPlaying,
+        goToStream: goToStream,
+        play: play,
+        stop: stop
+    });
+
+    function isPlaying()
+    {
+        return (player != null && stream != null && station != null);
+    }
+    function isStreamPlaying(comp_stream)
+    {
+        return (isPlaying() && stream.id == comp_stream.id);
+    }
+    function goToStream()
+    {
+        $state.go('app.station', { 'stationId': station.station.id });
+    }
+
+    function play(new_station, new_stream)
+    {
+        if (stream)
+        {
+            if (stream.id == new_stream.id)
+                return true;
+            else
+                stop();
+        }
+
+        stream = new_stream;
+        station = new_station;
+
+        if (window.cordova)
+        {
+            player = new Media(stream.url, function() {
+                console.log("playAudio(): Audio Success");
+            },
+            function(err) {
+                console.error("playAudio(): Audio Error");
+                console.error(err);
+
+                stop();
+            },
+            function(status) {
+                console.log(status);
+            });
+
+            player.play();
+        }
+        else
+        {
+            if (player == null)
+                player = document.createElement('audio');
+
+            player.setAttribute('src', stream.url);
+            player.play();
+        }
+    }
+
+    function stop()
+    {
+        if (player !== null)
+        {
+            if (window.cordova)
+            {
+                player.stop();
+                player.release();
+
+                window.plugin.notification.local.cancelAll();
+            }
+            else
+            {
+                player.pause();
+                player.setAttribute('src', '');
+            }
+        }
+
+        stream = null;
+        station = null;
+    }
+
+});
+
+services.service("apiService", function( $http, $q ) {
 
     // Return public API.
     return({
@@ -113,4 +231,5 @@ services.service("pvlService", function( $http, $q ) {
         else
             return handleError(response);
     }
+
 });
