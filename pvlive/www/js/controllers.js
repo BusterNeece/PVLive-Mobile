@@ -5,18 +5,19 @@ controllers.controller('AppCtrl', function($scope) {});
 /**
  * Stations Listing
  */
-controllers.controller('StationsCtrl', function($scope, pvlService, $timeout) {
+controllers.controller('StationsCtrl', function($scope, apiService, loadingService, $timeout) {
 
     var np_timeout = null;
 
     $scope.stations = {};
     $scope.reloadPage = function() { loadNowPlaying() };
 
+    loadingService.show();
     loadNowPlaying();
 
     function loadNowPlaying()
     {
-        pvlService.getNowPlaying().then(function(np)
+        apiService.getNowPlaying().then(function(np)
         {
             $scope.stations = {
                 'radio': {
@@ -32,6 +33,7 @@ controllers.controller('StationsCtrl', function($scope, pvlService, $timeout) {
             };
 
             $scope.$broadcast('scroll.refreshComplete');
+            loadingService.hide();
 
             if (np_timeout !== null)
                 $timeout.cancel(np_timeout);
@@ -49,13 +51,15 @@ controllers.controller('StationsCtrl', function($scope, pvlService, $timeout) {
 /**
  * Individual Station & Playback
  */
-controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams, pvlService, $timeout, $window) {
+controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams, apiService, radioService, loadingService, $timeout, $window) {
 
     var np_timeout = null;
     var active_stream = null;
 
     $scope.station = {};
     $scope.stream = {};
+
+    loadingService.show();
 
     $scope.reloadPage = function() { loadNowPlaying() };
 
@@ -64,7 +68,7 @@ controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams,
         return (active_stream == stream.id);
     };
     $scope.isPlaying = function(stream) {
-        return ($rootScope.radio.isStreamPlaying(stream));
+        return (radioService.isStreamPlaying(stream));
     };
 
     // On page triggered events.
@@ -99,14 +103,14 @@ controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams,
 
         if (like_btn.classList.contains('positive'))
         {
-            pvlService.voteClear(song.sh_id);
+            apiService.voteClear(song.sh_id);
 
             like_btn.classList.remove('positive');
             dislike_btn.classList.remove('assertive');
         }
         else
         {
-            pvlService.voteLike(song.sh_id);
+            apiService.voteLike(song.sh_id);
 
             dislike_btn.classList.remove('assertive');
 
@@ -121,14 +125,14 @@ controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams,
 
         if (dislike_btn.classList.contains('assertive'))
         {
-            pvlService.voteClear(song.sh_id);
+            apiService.voteClear(song.sh_id);
 
             like_btn.classList.remove('positive');
             dislike_btn.classList.remove('assertive');
         }
         else
         {
-            pvlService.voteDislike(song.sh_id);
+            apiService.voteDislike(song.sh_id);
 
             like_btn.classList.remove('positive');
 
@@ -141,7 +145,7 @@ controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams,
 
     function loadNowPlaying()
     {
-        pvlService.getNowPlayingStation($stateParams.stationId).then(function(np)
+        apiService.getNowPlayingStation($stateParams.stationId).then(function(np)
         {
             $scope.station = np;
 
@@ -153,6 +157,7 @@ controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams,
                 $timeout.cancel(np_timeout);
 
             np_timeout = $timeout(loadNowPlaying, 30000);
+            loadingService.hide();
         });
     }
 
@@ -160,9 +165,9 @@ controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams,
     {
         if (active_stream == null)
         {
-            if (playing_stream)
+            if (radioService.stream)
             {
-                active_stream = playing_stream;
+                active_stream = radioService.stream.id;
             }
             else
             {
@@ -189,19 +194,19 @@ controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams,
             document.getElementById('btn-like-song').classList.remove('positive');
             document.getElementById('btn-dislike-song').classList.remove('assertive');
 
-            if (playing_stream)
+            if (radioService.isPlaying())
                 notifyNewSong(new_stream.current_song);
         }
     }
 
     function playStream(stream)
     {
-        $rootScope.radio.play($scope.station, stream);
+        radioService.play($scope.station, stream);
     }
 
     function stopPlayer()
     {
-        $rootScope.radio.stop();
+        radioService.stop();
     }
 
     function notifyNewSong(song)
@@ -220,8 +225,6 @@ controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams,
 
     // Unload player on page switch.
     $scope.$on("$destroy", function(event) {
-        stopPlayer();
-
         $timeout.cancel(np_timeout);
     });
 
@@ -230,39 +233,39 @@ controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams,
 /**
  * Shows Listing
  */
-controllers.controller('ShowsCtrl', function($scope, pvlService, $ionicLoading)
+controllers.controller('ShowsCtrl', function($scope, apiService, loadingService)
 {
     $scope.shows = {};
     $scope.reloadPage = function() { loadShows() };
 
-    $scope.$on('$show', function(event) {
-        $ionicLoading.show({
-            template: 'Loading...'
-        });
-    });
+    loadingService.show();
 
     loadShows();
 
     function loadShows()
     {
-        pvlService.getShows().then(function(shows)
+        apiService.getShows().then(function(shows)
         {
             $scope.shows = shows;
 
             $scope.$broadcast('scroll.refreshComplete');
-            $ionicLoading.hide();
+            loadingService.hide();
         });
     }
 
 });
 
-controllers.controller('ShowCtrl', function($scope, pvlService, $stateParams) {
+controllers.controller('ShowCtrl', function($scope, $stateParams, apiService, loadingService) {
 
     $scope.show = {};
 
-    pvlService.getShow($stateParams.showId).then(function(show)
+    loadingService.show();
+
+    apiService.getShow($stateParams.showId).then(function(show)
     {
         $scope.show = show;
+
+        loadingService.hide();
     });
 
 });
@@ -270,39 +273,38 @@ controllers.controller('ShowCtrl', function($scope, pvlService, $stateParams) {
 /**
  * Conventions Listing
  */
-controllers.controller('ConventionsCtrl', function($scope, pvlService, $ionicLoading)
+controllers.controller('ConventionsCtrl', function($scope, apiService, loadingService)
 {
     $scope.cons = {};
     $scope.reloadPage = function() { loadConventions() };
 
-    $scope.$on('$show', function(event) {
-        $ionicLoading.show({
-            template: 'Loading...'
-        });
-    });
-
+    loadingService.show();
     loadConventions();
 
     function loadConventions()
     {
-        pvlService.getConventions().then(function(cons)
+        apiService.getConventions().then(function(cons)
         {
             $scope.cons = _.where(cons, function (con) { return con.archives_count > 0; });
 
             $scope.$broadcast('scroll.refreshComplete');
-            $ionicLoading.hide();
+            loadingService.hide();
         });
     }
 
 });
 
-controllers.controller('ConventionCtrl', function($scope, pvlService, $stateParams) {
-
+controllers.controller('ConventionCtrl', function($scope, $stateParams, apiService, loadingService)
+{
     $scope.con = {};
 
-    pvlService.getConvention($stateParams.conventionId).then(function(con)
+    loadingService.show();
+
+    apiService.getConvention($stateParams.conventionId).then(function(con)
     {
         $scope.con = con;
+
+        loadingService.hide();
     });
 
 });

@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 var app = angular.module('pvlive', ['ionic', 'pvlive.controllers', 'pvlive.services']);
 
-app.run(function($ionicPlatform, $rootScope)
+app.run(function($ionicPlatform, $rootScope, radioService)
 {
     $ionicPlatform.ready(function()
     {
@@ -19,80 +19,7 @@ app.run(function($ionicPlatform, $rootScope)
             StatusBar.styleDefault();
 
         // Establish global radio object.
-        $rootScope.radio = {
-            'player': null,
-            'stream': null,
-            'station': null,
-
-            'isPlaying': function() {
-                return (this.player != null && this.stream != null && this.station != null);
-            },
-            'isStreamPlaying': function(stream) {
-                return (this.isPlaying() && this.stream.id == stream.id);
-            },
-            'getStreamUrl': function() {
-                if (this.station != null)
-                    return '/app/station/'+this.station.id;
-                else
-                    return '';
-            },
-            'play': function(station, stream) {
-                if (this.stream)
-                {
-                    if (this.stream == stream.id)
-                        return true;
-                    else
-                        this.stop();
-                }
-
-                if (window.cordova)
-                {
-                    this.player = new Media(stream.url, function() {
-                            console.log("playAudio(): Audio Success");
-                        },
-                        function(err) {
-                            console.error("playAudio(): Audio Error");
-                            console.error(err);
-                        },
-                        function(status) {
-                            console.log(status);
-                        });
-
-                    this.player.play();
-                }
-                else
-                {
-                    if (this.player == null)
-                        this.player = document.createElement('audio');
-
-                    this.player.setAttribute('src', stream.url);
-                    this.player.play();
-                }
-
-                this.stream = stream;
-                this.station = station;
-            },
-            'stop': function() {
-                if (this.player !== null)
-                {
-                    if (window.cordova)
-                    {
-                        this.player.stop();
-                        this.player.release();
-
-                        window.plugin.notification.local.cancelAll();
-                    }
-                    else
-                    {
-                        this.player.pause();
-                        this.player.setAttribute('src', '');
-                    }
-                }
-
-                this.stream = null;
-                this.station = null;
-            }
-        };
+        $rootScope.radio = radioService;
 
     });
 });
