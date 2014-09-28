@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 var app = angular.module('pvlive', ['ionic', 'pvlive.controllers', 'pvlive.services']);
 
-app.run(function($ionicPlatform, $rootScope, radioService)
+app.run(function($ionicPlatform, $rootScope)
 {
     $ionicPlatform.ready(function()
     {
@@ -17,10 +17,6 @@ app.run(function($ionicPlatform, $rootScope, radioService)
         // org.apache.cordova.statusbar required
         if(window.StatusBar)
             StatusBar.styleDefault();
-
-        // Establish global radio object.
-        $rootScope.radio = radioService;
-
     });
 });
 

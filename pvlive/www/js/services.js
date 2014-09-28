@@ -23,11 +23,13 @@ services.service("loadingService", function($ionicLoading) {
 
 });
 
-services.service("radioService", function( $state ) {
+services.service("radioService", function( $state, $rootScope, $timeout, apiService ) {
 
     var player = null;
     var stream = null;
     var station = null;
+
+    var np_timeout;
 
     // Return public API.
     return({
@@ -92,6 +94,11 @@ services.service("radioService", function( $state ) {
             player.setAttribute('src', stream.url);
             player.play();
         }
+
+        loadNowPlaying();
+
+        // Always notify on the first song.
+        notifyNewSong(stream.current_song);
     }
 
     function stop()
@@ -114,6 +121,60 @@ services.service("radioService", function( $state ) {
 
         stream = null;
         station = null;
+
+        $timeout.cancel(np_timeout);
+    }
+
+    // Now-playing processing.
+    function loadNowPlaying()
+    {
+        apiService.getNowPlayingStation(station.station.id).then(function(np)
+        {
+            station = np;
+
+            processNowPlaying();
+
+            $rootScope.$broadcast('radio:updated', np);
+
+            if (np_timeout !== null)
+                $timeout.cancel(np_timeout);
+
+            np_timeout = $timeout(loadNowPlaying, 30000);
+        });
+    }
+
+    function processNowPlaying()
+    {
+        var new_stream = _.find(station.streams, {'id': stream.id});
+
+        // Detect song change.
+        if (stream.current_song.id != new_stream.current_song.id)
+        {
+            document.getElementById('btn-like-song').classList.remove('positive');
+            document.getElementById('btn-dislike-song').classList.remove('assertive');
+
+            if (isPlaying())
+                notifyNewSong(new_stream.current_song);
+        }
+
+        stream = new_stream;
+    }
+
+    function notifyNewSong(song)
+    {
+        console.log('Song Change: '+song.title+' by '+song.artist);
+
+        if (window.cordova)
+        {
+            window.plugin.notification.local.add({
+                id:         song.id,
+                message:    song.title+' by '+song.artist,
+                title:      station.station.name,
+                sound:      '',
+                ongoing:    true,
+                autoCancel: false
+            });
+        }
     }
 
 });
@@ -203,6 +264,8 @@ services.service("apiService", function( $http, $q ) {
 
     function apiCall( api_function, api_params )
     {
+        console.log('API Call: '+api_function);
+
         var request = $http({
             method: 'GET',
             url: "http://ponyvillelive.com/api/"+api_function,

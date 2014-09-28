@@ -2,13 +2,13 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.ponyvillelive.pvlmobile"
-        version   = "2.0.5">
+        version   = "2.0.6">
     <name>Ponyville Live!</name>
 
     <description>
         The mobile application for the Ponyville Live! network.
 
-        Ponyville Live! is the pony world's largest media network, featuring 24/7 pony radio stations, video streams, podcasts, live convention coverage, and much more. Log in and pony on.
+        Ponyville Live! is the pony world's largest media network, featuring 24/7 pony radio, video, podcasts, convention coverage, and much more. Log in and pony on.
 
         Ponyville Live! - Bringing Pony People Together
     </description>
