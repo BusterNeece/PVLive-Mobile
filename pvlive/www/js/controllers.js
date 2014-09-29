@@ -79,7 +79,7 @@ controllers.controller('StationCtrl', function($scope, $rootScope, $stateParams,
         // Special handling for video streams.
         if (stream.type == "stream")
         {
-            $window.open(encodeURI(url), '_system', 'location=yes');
+            $window.open(encodeURI(stream.url), '_system', 'location=yes');
             return;
         }
 
