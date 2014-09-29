@@ -172,7 +172,7 @@ services.service("radioService", function( $state, $rootScope, $timeout, apiServ
                 id:         song.id,
                 message:    song.title+' by '+song.artist,
                 title:      station.station.name,
-                sound:      '',
+                sound:      null,
                 ongoing:    true,
                 autoCancel: false
             });
