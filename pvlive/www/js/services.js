@@ -166,6 +166,8 @@ services.service("radioService", function( $state, $rootScope, $timeout, apiServ
 
         if (window.cordova)
         {
+            window.plugin.notification.local.cancelAll();
+
             window.plugin.notification.local.add({
                 id:         song.id,
                 message:    song.title+' by '+song.artist,
