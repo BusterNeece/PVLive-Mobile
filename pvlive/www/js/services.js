@@ -270,7 +270,7 @@ services.service("apiService", function( $http, $q ) {
 
         var request = $http({
             method: 'GET',
-            url: "http://ponyvillelive.com/api/"+api_function,
+            url: "http://api.ponyvillelive.com/"+api_function,
             data: {
                 service: 'pvlmobile'
             }
