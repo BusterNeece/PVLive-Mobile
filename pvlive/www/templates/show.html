@@ -19,7 +19,7 @@
             <a class="item item-text-wrap" ng-repeat="row in show.episodes" href="{{row.web_url}}" target="_blank">
                 <h2>{{row.title}}</h2>
                 <h4>{{row.timestamp*1000 | date:'medium'}}</h4>
-                <p>{{row.body}}</p>
+                <p>{{row.summary}}</p>
             </a>
         </div>
 
